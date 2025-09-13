@@ -16,11 +16,12 @@ import {
   ShieldExclamationIcon
 } from '@heroicons/react/24/outline'
 import { useTheme } from 'next-themes'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Home', href: '/', icon: HeartIcon },
-  { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
+  { name: 'Dashboard', href: '/login', icon: ChartBarIcon },
   { name: 'Activities', href: '/activities', icon: BookOpenIcon },
   { name: 'Community', href: '/community', icon: ChatBubbleLeftRightIcon },
   { name: 'Learning', href: '/learning', icon: BookOpenIcon },
@@ -31,6 +32,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const { theme, setTheme, resolvedTheme } = useTheme()
+  const { language, setLanguage, t } = useLanguage()
   const isDark = resolvedTheme === 'dark'
 
   const cycleTheme = () => {
@@ -84,6 +86,17 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
+            {/* Language selector */}
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="en">🇺🇸 EN</option>
+              <option value="es">🇪🇸 ES</option>
+              <option value="fr">🇫🇷 FR</option>
+            </select>
+
             {/* Theme toggle */}
             <button
               onClick={cycleTheme}
