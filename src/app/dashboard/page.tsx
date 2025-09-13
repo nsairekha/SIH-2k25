@@ -18,7 +18,8 @@ import {
   PlusIcon,
   ArrowRightIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import { useTheme } from 'next-themes'
 import { getGreeting } from '@/lib/utils'
@@ -96,6 +97,13 @@ const quickActions = [
     bgColor: 'bg-pink-100 dark:bg-pink-900/30'
   },
   {
+    title: 'Take Wellness Survey',
+    description: 'Complete a mental health assessment',
+    icon: DocumentTextIcon,
+    color: 'text-blue-600 dark:text-blue-400',
+    bgColor: 'bg-blue-100 dark:bg-blue-900/30'
+  },
+  {
     title: 'Start Meditation',
     description: 'Take a 5-minute mindfulness break',
     icon: PlayIcon,
@@ -106,8 +114,8 @@ const quickActions = [
     title: 'Journal Entry',
     description: 'Reflect on your day',
     icon: BookOpenIcon,
-    color: 'text-blue-600 dark:text-blue-400',
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30'
+    color: 'text-indigo-600 dark:text-indigo-400',
+    bgColor: 'bg-indigo-100 dark:bg-indigo-900/30'
   },
   {
     title: 'Connect with Community',

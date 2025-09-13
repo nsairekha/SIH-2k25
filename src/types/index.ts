@@ -190,3 +190,59 @@ export interface EngagementMetrics {
   featureUsage: Record<string, number>
   retentionRate: number
 }
+
+export interface Survey {
+  id: string
+  userId: string
+  type: 'daily' | 'weekly' | 'monthly' | 'initial' | 'custom'
+  title: string
+  description?: string
+  questions: SurveyQuestion[]
+  responses: SurveyResponse[]
+  completedAt?: Date
+  isCompleted: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface SurveyQuestion {
+  id: string
+  type: 'mood' | 'scale' | 'multiple_choice' | 'text' | 'boolean' | 'rating'
+  question: string
+  options?: string[]
+  min?: number
+  max?: number
+  required: boolean
+  category: string
+}
+
+export interface SurveyResponse {
+  questionId: string
+  answer: any
+  timestamp: Date
+}
+
+export interface SurveyTemplate {
+  type: 'daily' | 'weekly' | 'monthly' | 'initial' | 'custom'
+  title: string
+  description: string
+  questions: SurveyQuestion[]
+}
+
+export interface SurveyAnalytics {
+  summary: {
+    totalSurveys: number
+    completionRate: number
+    period: string
+  }
+  categoryAnalysis: Record<string, any[]>
+  moodTrends: Array<{
+    date: string
+    mood: any
+  }>
+  stressTrends: Array<{
+    date: string
+    stress: any
+  }>
+}
+

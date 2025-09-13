@@ -13,7 +13,8 @@ import {
   ChatBubbleLeftRightIcon,
   BookOpenIcon,
   ChartBarIcon,
-  ShieldExclamationIcon
+  ShieldExclamationIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline'
 import { useTheme } from 'next-themes'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -22,6 +23,8 @@ import { cn } from '@/lib/utils'
 const navigation = [
   { name: 'Home', href: '/', icon: HeartIcon },
   { name: 'Dashboard', href: '/login', icon: ChartBarIcon },
+  { name: 'Mood Tracker', href: '/mood-tracker', icon: HeartIcon },
+  { name: 'Surveys', href: '/surveys', icon: DocumentTextIcon },
   { name: 'Activities', href: '/activities', icon: BookOpenIcon },
   { name: 'Community', href: '/community', icon: ChatBubbleLeftRightIcon },
   { name: 'Learning', href: '/learning', icon: BookOpenIcon },
