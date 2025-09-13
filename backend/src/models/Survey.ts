@@ -29,8 +29,7 @@ export interface ISurvey extends Document {
 
 const surveySchema = new Schema<ISurvey>({
   userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+    type: String,
     required: true,
     index: true
   },

@@ -14,20 +14,23 @@ import {
   BookOpenIcon,
   ChartBarIcon,
   ShieldExclamationIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  UserCircleIcon,
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline'
 import { useTheme } from 'next-themes'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Home', href: '/', icon: HeartIcon },
-  { name: 'Dashboard', href: '/login', icon: ChartBarIcon },
+  { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Mood Tracker', href: '/mood-tracker', icon: HeartIcon },
   { name: 'Surveys', href: '/surveys', icon: DocumentTextIcon },
   { name: 'Activities', href: '/activities', icon: BookOpenIcon },
-  { name: 'Community', href: '/community', icon: ChatBubbleLeftRightIcon },
-  { name: 'Learning', href: '/learning', icon: BookOpenIcon },
+  // { name: 'Community', href: '/community', icon: ChatBubbleLeftRightIcon },
+  // { name: 'Learning', href: '/learning', icon: BookOpenIcon },
   { name: 'Crisis Support', href: '/crisis', icon: ShieldExclamationIcon },
 ]
 
@@ -36,6 +39,7 @@ export default function Header() {
   const pathname = usePathname()
   const { theme, setTheme, resolvedTheme } = useTheme()
   const { language, setLanguage, t } = useLanguage()
+  const { user, isAuthenticated, logout } = useAuth()
   const isDark = resolvedTheme === 'dark'
 
   const cycleTheme = () => {
@@ -108,6 +112,40 @@ export default function Header() {
             >
               <ThemeIcon className="h-5 w-5" />
             </button>
+
+            {/* User authentication */}
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <UserCircleIcon className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {user?.name}
+                  </span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-red-400 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Logout"
+                >
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/login"
+                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
 
             {/* Mobile menu button */}
             <button

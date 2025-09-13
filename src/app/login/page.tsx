@@ -12,6 +12,7 @@ import {
   LockClosedIcon
 } from '@heroicons/react/24/outline'
 import { useTheme } from 'next-themes'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -20,18 +21,26 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { resolvedTheme } = useTheme()
+  const { login } = useAuth()
   const isDark = resolvedTheme === 'dark'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
-    // Simulate login process
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // For now, just navigate to dashboard without authentication
-    router.push('/dashboard')
-    setIsLoading(false)
+    try {
+      const success = await login(email, password)
+      if (success) {
+        router.push('/dashboard')
+      } else {
+        alert('Login failed. Please check your credentials.')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      alert('Login failed. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -194,7 +203,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Don't have an account?{' '}
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+              <a href="/register" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                 Sign up here
               </a>
             </p>

@@ -33,8 +33,7 @@ export interface IMoodEntry extends Document {
 
 const moodEntrySchema = new Schema<IMoodEntry>({
   userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+    type: String,
     required: true,
     index: true
   },
@@ -143,7 +142,7 @@ moodEntrySchema.index({ timestamp: -1 });
 moodEntrySchema.index({ tags: 1 });
 
 // Virtual for date only (without time)
-moodEntrySchema.virtual('date').get(function() {
+moodEntrySchema.virtual('date').get(function(this: IMoodEntry) {
   return this.timestamp.toISOString().split('T')[0];
 });
 

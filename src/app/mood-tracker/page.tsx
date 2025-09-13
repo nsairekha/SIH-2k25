@@ -9,12 +9,14 @@ import {
   ClockIcon,
   ArrowLeftIcon,
   PlusIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
   MinusIcon
 } from '@heroicons/react/24/outline'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
 import { useTheme } from 'next-themes'
+import { useAuth } from '@/contexts/AuthContext'
+import { moodAPI } from '@/lib/api'
 import Link from 'next/link'
 
 const moodData = [
@@ -51,21 +53,50 @@ const triggers = [
 
 export default function MoodTrackerPage() {
   const { resolvedTheme } = useTheme()
+  const { user } = useAuth()
   const isDark = resolvedTheme === 'dark'
   const [selectedMood, setSelectedMood] = useState<number | null>(null)
   const [selectedTriggers, setSelectedTriggers] = useState<string[]>([])
   const [notes, setNotes] = useState('')
   const [showLogForm, setShowLogForm] = useState(false)
   const [timeframe, setTimeframe] = useState('week')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleMoodSubmit = () => {
-    if (selectedMood) {
-      // Here you would typically save to a database
-      console.log('Mood logged:', { mood: selectedMood, triggers: selectedTriggers, notes })
+  const handleMoodSubmit = async () => {
+    if (!selectedMood) return
+
+    setIsSubmitting(true)
+    try {
+      const moodData = {
+        mood: {
+          value: selectedMood,
+          emoji: moodOptions.find(m => m.value === selectedMood)?.emoji || '😐',
+          label: moodOptions.find(m => m.value === selectedMood)?.label || 'Neutral'
+        },
+        intensity: Math.floor(Math.random() * 10) + 1,
+        emotions: [
+          {
+            name: 'General',
+            intensity: Math.floor(Math.random() * 10) + 1,
+            category: 'general'
+          }
+        ],
+        triggers: selectedTriggers,
+        notes: notes,
+        timestamp: new Date()
+      }
+
+      await moodAPI.createMoodEntry(moodData)
       setSelectedMood(null)
       setSelectedTriggers([])
       setNotes('')
       setShowLogForm(false)
+      alert('Mood entry saved successfully!')
+    } catch (error) {
+      console.error('Error saving mood entry:', error)
+      alert('Failed to save mood entry. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -200,10 +231,10 @@ export default function MoodTrackerPage() {
                   <div className="flex space-x-4">
                     <button
                       onClick={handleMoodSubmit}
-                      disabled={!selectedMood}
+                      disabled={!selectedMood || isSubmitting}
                       className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      Save Mood Entry
+                      {isSubmitting ? 'Saving...' : 'Save Mood Entry'}
                     </button>
                     <button
                       onClick={() => setShowLogForm(false)}
@@ -370,9 +401,9 @@ export default function MoodTrackerPage() {
                   <span className="text-gray-600 dark:text-gray-400">Trend</span>
                   <div className="flex items-center space-x-1">
                     {moodTrend > 0 ? (
-                      <TrendingUpIcon className="h-4 w-4 text-green-500" />
+                      <ArrowTrendingUpIcon className="h-4 w-4 text-green-500" />
                     ) : moodTrend < 0 ? (
-                      <TrendingDownIcon className="h-4 w-4 text-red-500" />
+                      <ArrowTrendingDownIcon className="h-4 w-4 text-red-500" />
                     ) : (
                       <MinusIcon className="h-4 w-4 text-gray-500" />
                     )}

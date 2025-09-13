@@ -18,42 +18,46 @@ interface JwtPayload {
   exp: number;
 }
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Access denied. No token provided.'
       });
+      return;
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     const user = await User.findById(decoded.id).select('-password');
     
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Token is not valid. User not found.'
       });
+      return;
     }
 
     req.user = user;
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Invalid token.'
       });
+      return;
     }
     
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Token expired.'
       });
+      return;
     }
 
     res.status(500).json({
@@ -82,12 +86,13 @@ export const optionalAuth = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const requireEmailVerification = (req: Request, res: Response, next: NextFunction) => {
+export const requireEmailVerification = (req: Request, res: Response, next: NextFunction): void => {
   if (!req.user?.isEmailVerified) {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       message: 'Email verification required.'
     });
+    return;
   }
   next();
 };
@@ -98,12 +103,13 @@ export const requirePremium = (req: Request, res: Response, next: NextFunction) 
   next();
 };
 
-export const adminOnly = (req: Request, res: Response, next: NextFunction) => {
+export const adminOnly = (req: Request, res: Response, next: NextFunction): void => {
   if (!req.user || req.user.email !== 'admin@mindspace.com') {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       message: 'Admin access required.'
     });
+    return;
   }
   next();
 };

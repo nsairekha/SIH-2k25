@@ -16,7 +16,7 @@ export const generateAccessToken = (user: IUser): string => {
     expiresIn: process.env.JWT_EXPIRE || '7d',
     issuer: 'mindspace-api',
     audience: 'mindspace-client'
-  });
+  } as jwt.SignOptions);
 };
 
 export const generateRefreshToken = (user: IUser): string => {
@@ -29,7 +29,7 @@ export const generateRefreshToken = (user: IUser): string => {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d',
     issuer: 'mindspace-api',
     audience: 'mindspace-client'
-  });
+  } as jwt.SignOptions);
 };
 
 export const generateEmailVerificationToken = (user: IUser): string => {

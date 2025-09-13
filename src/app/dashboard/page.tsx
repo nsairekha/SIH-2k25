@@ -23,6 +23,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { useTheme } from 'next-themes'
 import { getGreeting } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { moodAPI } from '@/lib/api'
 import PointsSystem from '@/components/features/PointsSystem'
 
 const mentalHealthFeatures = [
@@ -179,9 +181,11 @@ const achievements = [
 
 export default function DashboardPage() {
   const { resolvedTheme } = useTheme()
+  const { user } = useAuth()
   const isDark = resolvedTheme === 'dark'
   const greeting = getGreeting()
   const [selectedMood, setSelectedMood] = useState<number | null>(null)
+  const [isSavingMood, setIsSavingMood] = useState(false)
 
   const moodOptions = [
     { value: 1, emoji: '😢', label: 'Very Low', color: 'bg-red-500' },
@@ -190,6 +194,39 @@ export default function DashboardPage() {
     { value: 4, emoji: '🙂', label: 'Good', color: 'bg-blue-500' },
     { value: 5, emoji: '😊', label: 'Great', color: 'bg-green-500' }
   ]
+
+  const handleSaveMood = async () => {
+    if (!selectedMood) return
+
+    setIsSavingMood(true)
+    try {
+      const moodData = {
+        mood: {
+          value: selectedMood,
+          emoji: moodOptions.find(m => m.value === selectedMood)?.emoji || '😐',
+          label: moodOptions.find(m => m.value === selectedMood)?.label || 'Neutral'
+        },
+        intensity: Math.floor(Math.random() * 10) + 1, // Random intensity for demo
+        emotions: [
+          {
+            name: 'General',
+            intensity: Math.floor(Math.random() * 10) + 1,
+            category: 'general'
+          }
+        ],
+        timestamp: new Date()
+      }
+
+      await moodAPI.createMoodEntry(moodData)
+      setSelectedMood(null)
+      alert('Mood saved successfully!')
+    } catch (error) {
+      console.error('Error saving mood:', error)
+      alert('Failed to save mood. Please try again.')
+    } finally {
+      setIsSavingMood(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -253,8 +290,12 @@ export default function DashboardPage() {
                       {moodOptions.find(m => m.value === selectedMood)?.label}
                     </span>
                   </p>
-                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    Save Mood
+                  <button 
+                    onClick={handleSaveMood}
+                    disabled={isSavingMood}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isSavingMood ? 'Saving...' : 'Save Mood'}
                   </button>
                 </motion.div>
               )}

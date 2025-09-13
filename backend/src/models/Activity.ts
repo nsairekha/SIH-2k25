@@ -22,8 +22,6 @@ export interface IActivity extends Document {
   points: number;
   tags: string[];
   isActive: boolean;
-  isPremium: boolean;
-  createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,13 +29,13 @@ export interface IActivity extends Document {
 const activitySchema = new Schema<IActivity>({
   title: {
     type: String,
-    required: [true, 'Title is required'],
+    required: true,
     trim: true,
     maxlength: [100, 'Title cannot exceed 100 characters']
   },
   description: {
     type: String,
-    required: [true, 'Description is required'],
+    required: true,
     trim: true,
     maxlength: [500, 'Description cannot exceed 500 characters']
   },
@@ -70,27 +68,16 @@ const activitySchema = new Schema<IActivity>({
     }],
     audioUrl: {
       type: String,
-      validate: {
-        validator: function(v: string) {
-          return !v || /^https?:\/\/.+/.test(v);
-        },
-        message: 'Audio URL must be a valid URL'
-      }
+      trim: true
     },
     videoUrl: {
       type: String,
-      validate: {
-        validator: function(v: string) {
-          return !v || /^https?:\/\/.+/.test(v);
-        },
-        message: 'Video URL must be a valid URL'
-      }
+      trim: true
     },
     interactiveElements: [{
       type: {
         type: String,
-        enum: ['button', 'slider', 'input', 'timer'],
-        required: true
+        enum: ['button', 'slider', 'input', 'timer']
       },
       id: {
         type: String,
@@ -111,33 +98,20 @@ const activitySchema = new Schema<IActivity>({
   },
   tags: [{
     type: String,
-    trim: true,
-    lowercase: true
+    trim: true
   }],
   isActive: {
     type: Boolean,
     default: true
-  },
-  isPremium: {
-    type: Boolean,
-    default: false
-  },
-  createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
   }
 }, {
   timestamps: true
 });
 
 // Indexes for efficient queries
-activitySchema.index({ type: 1, isActive: 1 });
-activitySchema.index({ difficulty: 1, isActive: 1 });
-activitySchema.index({ category: 1, isActive: 1 });
+activitySchema.index({ type: 1, difficulty: 1 });
+activitySchema.index({ category: 1 });
 activitySchema.index({ tags: 1 });
-activitySchema.index({ points: 1 });
+activitySchema.index({ isActive: 1 });
 
 export default mongoose.model<IActivity>('Activity', activitySchema);
-
-

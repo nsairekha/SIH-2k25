@@ -9,9 +9,13 @@ async function apiRequest<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`
   
+  // Get auth token from localStorage
+  const token = localStorage.getItem('accessToken')
+  
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` }),
       ...options.headers,
     },
     credentials: 'include',
@@ -20,6 +24,13 @@ async function apiRequest<T>(
   const response = await fetch(url, { ...defaultOptions, ...options })
   
   if (!response.ok) {
+    // If unauthorized, try to refresh token or redirect to login
+    if (response.status === 401) {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('user')
+      window.location.href = '/login'
+    }
     throw new Error(`API request failed: ${response.statusText}`)
   }
   

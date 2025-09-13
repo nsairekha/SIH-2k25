@@ -700,7 +700,7 @@ export const getSurveyTemplates = async (req: Request, res: Response) => {
       }
     };
 
-    let selectedTemplate = templates;
+    let selectedTemplate: any = templates;
     if (type && templates[type as keyof typeof templates]) {
       selectedTemplate = { [type as string]: templates[type as keyof typeof templates] };
     }
