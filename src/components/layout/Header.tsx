@@ -27,7 +27,7 @@ const navigation = [
   { name: 'Home', href: '/', icon: HeartIcon },
   { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Mood Tracker', href: '/mood-tracker', icon: HeartIcon },
-  { name: 'Surveys', href: '/surveys', icon: DocumentTextIcon },
+  { name: 'Mood Graph', href: '/surveys', icon: DocumentTextIcon },
   { name: 'Activities', href: '/activities', icon: BookOpenIcon },
   // { name: 'Community', href: '/community', icon: ChatBubbleLeftRightIcon },
   // { name: 'Learning', href: '/learning', icon: BookOpenIcon },
